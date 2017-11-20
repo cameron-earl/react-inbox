@@ -67,33 +67,37 @@ class App extends Component {
     ]
   }
 
-  alterMessages = (matchProperty, matchValue, mapFunc) => {
-    const newMessages = this.state.messages
+  // Will change all messages where message.matchProperty === matchValue
+  // For each matched message, message[propertyToUpdate] will be updated
+  //  according to propUpdateFunction
+  // Will then rebuild messages and set state
+  alterMessages = (matchProperty, matchValue, propertyToUpdate, propUpdateFunction) => {
+    const updatedMessages = this.state.messages
       .filter(m=>m[matchProperty] === matchValue)
-      .map(m=>{
-        let newMsg = Object.assign({},m)
-        mapFunc(newMsg)
-        return newMsg
-      })
-      .concat(this.state.messages.filter(m=>m[matchProperty] !== matchValue))
+      .map(m=>({ ...m, [propertyToUpdate]: propUpdateFunction(m[propertyToUpdate])}))
+    const otherMessages = this.state.messages
+      .filter(m=>m[matchProperty] !== matchValue)
+    const newMessageArr = updatedMessages
+      .concat(otherMessages)
       .sort((a,b)=>a.id-b.id)
-    this.setState({ messages: newMessages })
+    this.setState({ messages: newMessageArr })
   }
 
-  alterSelectedMessages = (mapFunc) => {
-    this.alterMessages('selected', true, mapFunc)
+  //Makes it slightly easier to just match selected messages
+  alterSelectedMessages = (propToUpdate, propUpdateFunction) => {
+    this.alterMessages('selected', true, propToUpdate, propUpdateFunction)
   }
 
-  toggleMessageProperty = (messageId, property) => {
-    this.alterMessages('id', messageId, m=>m[property]=!m[property])
+  toggleMessageProperty = (messageId, propToUpdate) => {
+    this.alterMessages('id', messageId, propToUpdate, prop => !prop)
   }
 
-  setAllMessageProperty = (property, newValue) => {
-    this.alterMessages(null, undefined, m=>m[property]=newValue)
+  setAllMessageProperty = (propToUpdate, newValue) => {
+    this.alterMessages(null, undefined, propToUpdate, prop => newValue)
   }
 
-  setSelectedMessageProperty = (property, newValue) => {
-    this.alterSelectedMessages(m => m[property] = newValue)
+  setSelectedMessageProperty = (propToUpdate, newValue) => {
+    this.alterSelectedMessages(propToUpdate, prop => newValue)
   }
 
   deleteSelectedMessages = () => {
@@ -101,11 +105,11 @@ class App extends Component {
   }
 
   addLabelToSelected = (newLabel) => {
-    this.alterSelectedMessages(m => m.labels = [...new Set([...m.labels, newLabel])])
+    this.alterSelectedMessages('labels', prop =>[...new Set([...prop, newLabel])])
   }
 
   removeLabelFromSelected = (removedLabel) => {
-    this.alterSelectedMessages(m => m.labels = m.labels.filter(l=>l !== removedLabel))
+    this.alterSelectedMessages('labels', prop => prop.filter(l=>l !== removedLabel))
   }
 
   render() {

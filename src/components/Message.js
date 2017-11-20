@@ -2,12 +2,6 @@ import React, { Component } from 'react';
 
 class Message extends Component {
 
-  isReadClass = () => this.props.message.read ? ' read' : ' unread'
-
-  isSelectedClass = () => this.props.message.selected ? ' selected' : ''
-
-  starIcon = () => this.props.message.starred ? 'fa-star' : 'fa-star-o'
-
   handleSelected = (e) => {
     this.props.toggleMessageProperty(this.props.message.id, 'selected')
   }
@@ -16,36 +10,37 @@ class Message extends Component {
     this.props.toggleMessageProperty(this.props.message.id, 'starred')
   }
 
-
   render() {
-    const labels = this.props.message.labels.map((label, i)=>(
+    const {selected = false, read, labels, starred, subject} = this.props.message
+
+    const labelElements = labels.map((label, i)=>(
       <span key={i} className="label label-warning">{label}</span>
     ))
 
     return (
       <div
-        className={'row message' + this.isReadClass() + this.isSelectedClass()}>
+        className={`row message ${read ? 'read' : 'unread'}${selected ? ' selected' : ''}`}>
         <div className="col-xs-1">
           <div className="row">
             <div className="col-xs-2">
               <input
                 type="checkbox"
-                checked={ this.props.message.selected }
+                checked={selected}
                 onChange={this.handleSelected}
               />
             </div>
             <div className="col-xs-2">
               <i
-                className={'star fa ' + this.starIcon()}
+                className={'star fa fa-star' + starred ? '' : '-o'}
                 onClick={this.handleStarChange}
                 ></i>
             </div>
           </div>
         </div>
         <div className="col-xs-11">
-          {labels}
+          {labelElements}
           <a href="#">
-            { this.props.message.subject }
+            { subject }
           </a>
         </div>
       </div>

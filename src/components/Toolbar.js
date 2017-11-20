@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 class Toolbar extends Component {
 
-
   handleCheck = (e) => {
     this.props.setAllMessageProperty(
       'selected',
@@ -32,6 +31,13 @@ class Toolbar extends Component {
     let removedLabel = e.target.value
     if (removedLabel === '') return
     this.props.removeLabelFromSelected(removedLabel)
+  }
+
+  handleSelect = () => {
+    const newValue = this.state.messages.some(m=>!m.selected)
+    this.setState({
+      messages: this.state.messages.map(m=>({...m, selected: newValue}))
+    })
   }
 
   render() {
