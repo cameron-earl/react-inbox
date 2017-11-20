@@ -11,7 +11,7 @@ class Message extends Component {
   }
 
   render() {
-    const {selected = false, read, labels, starred, subject} = this.props.message
+    const {id, selected = false, read, labels, starred, subject} = this.props.message
 
     const labelElements = labels.map((label, i)=>(
       <span key={i} className="label label-warning">{label}</span>
@@ -39,9 +39,9 @@ class Message extends Component {
         </div>
         <div className="col-xs-11">
           {labelElements}
-          <a href="#">
+          <span onClick={(e)=>this.props.setMessageProperty(id, 'read', true)}>
             { subject }
-          </a>
+          </span>
         </div>
       </div>
     );

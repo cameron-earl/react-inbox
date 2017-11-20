@@ -87,6 +87,10 @@ class App extends Component {
     this.alterMessages('id', messageId, propToUpdate, prop => !prop)
   }
 
+  setMessageProperty = (messageId, propToUpdate, newValue) => {
+    this.alterMessages('id', messageId, propToUpdate, prop => newValue)
+  }
+
   setAllMessageProperty = (propToUpdate, newValue) => {
     this.alterMessages(null, undefined, propToUpdate, prop => newValue)
   }
@@ -120,6 +124,7 @@ class App extends Component {
         />
         <Messages
           messages={this.state.messages}
+          setMessageProperty={this.setMessageProperty}
           toggleMessageProperty={this.toggleMessageProperty}
         />
       </div>
