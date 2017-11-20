@@ -67,72 +67,45 @@ class App extends Component {
     ]
   }
 
-  setMessageProperty = (messageId, property, newValue, toggle) => {
-    const messagesClone = this.state.messages.filter(m=>m.id !== messageId)
-    const newMessage = Object.assign({},this.state.messages.find(m=>m.id === messageId))
-    if (toggle) newValue = !newMessage[property]
-    newMessage[property] = newValue
-    const newMessages = messagesClone.concat(newMessage).sort((a,b)=>a.id-b.id)
+  alterMessages = (matchProperty, matchValue, mapFunc) => {
+    const newMessages = this.state.messages
+      .filter(m=>m[matchProperty] === matchValue)
+      .map(m=>{
+        let newMsg = Object.assign({},m)
+        mapFunc(newMsg)
+        return newMsg
+      })
+      .concat(this.state.messages.filter(m=>m[matchProperty] !== matchValue))
+      .sort((a,b)=>a.id-b.id)
     this.setState({ messages: newMessages })
+  }
+
+  alterSelectedMessages = (mapFunc) => {
+    this.alterMessages('selected', true, mapFunc)
   }
 
   toggleMessageProperty = (messageId, property) => {
-    this.setMessageProperty(messageId, property, null, true)
+    this.alterMessages('id', messageId, m=>m[property]=!m[property])
   }
 
   setAllMessageProperty = (property, newValue) => {
-    const newMessages = this.state.messages.map(m=>{
-      const newMessage = Object.assign({},m)
-      newMessage[property] = newValue
-      return newMessage
-    })
-    this.setState({ messages: newMessages })
+    this.alterMessages(null, undefined, m=>m[property]=newValue)
   }
 
   setSelectedMessageProperty = (property, newValue) => {
-    const newMessages = this.state.messages
-      .filter(m=>m.selected)
-      .map(m=>{
-        const newMessage = Object.assign({},m)
-        newMessage[property] = newValue
-        return newMessage
-      })
-      .concat(this.state.messages.filter(m=>!m.selected))
-      .sort((a,b)=>a.id-b.id)
-    this.setState({ messages: newMessages })
+    this.alterSelectedMessages(m => m[property] = newValue)
   }
 
   deleteSelectedMessages = () => {
-    const newMessages = this.state.messages.filter(m=>!m.selected)
-    this.setState({messages: newMessages})
+    this.setState({messages: this.state.messages.filter(m=>!m.selected)})
   }
 
   addLabelToSelected = (newLabel) => {
-    const newMessages = this.state.messages
-      .filter(m=>m.selected)
-      .map(m=>{
-
-        const newMessage = Object.assign({},m)
-        newMessage.labels = [...new Set([...m.labels, newLabel])]
-        console.log(m, newMessage)
-        return newMessage
-      })
-      .concat(this.state.messages.filter(m=>!m.selected))
-      .sort((a,b)=>a.id-b.id)
-    this.setState({messages: newMessages})
+    this.alterSelectedMessages(m => m.labels = [...new Set([...m.labels, newLabel])])
   }
 
   removeLabelFromSelected = (removedLabel) => {
-    const newMessages = this.state.messages
-      .filter(m=>m.selected)
-      .map(m=>{
-        const newMessage = Object.assign({},m)
-        newMessage.labels = m.labels.filter(l=>l !== removedLabel)
-        return newMessage
-      })
-      .concat(this.state.messages.filter(m=>!m.selected))
-      .sort((a,b)=>a.id-b.id)
-    this.setState({messages: newMessages})
+    this.alterSelectedMessages(m => m.labels = m.labels.filter(l=>l !== removedLabel))
   }
 
   render() {

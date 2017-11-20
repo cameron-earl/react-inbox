@@ -24,14 +24,12 @@ class Toolbar extends Component {
 
   handleAddLabel = (e) => {
     let newLabel = e.target.value
-    console.log('handleAddLabel', newLabel)
     if (newLabel === '') return
     this.props.addLabelToSelected(newLabel)
   }
 
   handleRemoveLabel = (e) => {
     let removedLabel = e.target.value
-    console.log('handleRemoveLabel', removedLabel)
     if (removedLabel === '') return
     this.props.removeLabelFromSelected(removedLabel)
   }
