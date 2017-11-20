@@ -78,3 +78,8 @@ footer.spacer {
 .fa-close {
   cursor: pointer;
 }
+
+select.form-control.label-select {
+  position: relative;
+  top: -3px;
+}
