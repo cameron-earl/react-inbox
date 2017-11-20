@@ -33,13 +33,6 @@ class Toolbar extends Component {
     this.props.removeLabelFromSelected(removedLabel)
   }
 
-  handleSelect = () => {
-    const newValue = this.state.messages.some(m=>!m.selected)
-    this.setState({
-      messages: this.state.messages.map(m=>({...m, selected: newValue}))
-    })
-  }
-
   render() {
 
     const unreadCount = this.props.messages.reduce((a,b)=>a+!b.read,0)
