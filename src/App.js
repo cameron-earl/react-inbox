@@ -67,25 +67,20 @@ class App extends Component {
     ]
   }
 
-  // Will change all messages where message.matchProperty === matchValue
+  // Will change all messages where message.matchProp === matchValue
   // For each matched message, message[propertyToUpdate] will be updated
   //  according to propUpdateFunction
-  // Will then rebuild messages and set state
-  alterMessages = (matchProperty, matchValue, propertyToUpdate, propUpdateFunction) => {
-    const updatedMessages = this.state.messages
-      .filter(m=>m[matchProperty] === matchValue)
-      .map(m=>({ ...m, [propertyToUpdate]: propUpdateFunction(m[propertyToUpdate])}))
-    const otherMessages = this.state.messages
-      .filter(m=>m[matchProperty] !== matchValue)
-    const newMessageArr = updatedMessages
-      .concat(otherMessages)
-      .sort((a,b)=>a.id-b.id)
+  alterMessages = (matchProp, matchValue, propToUpdate, propUpdateFn) => {
+    const newMessageArr = this.state.messages.map(m=>{
+      if (m[matchProp] !== matchValue) return m
+      return {...m, [propToUpdate]: propUpdateFn(m[propToUpdate])}
+    })
     this.setState({ messages: newMessageArr })
   }
 
   //Makes it slightly easier to just match selected messages
-  alterSelectedMessages = (propToUpdate, propUpdateFunction) => {
-    this.alterMessages('selected', true, propToUpdate, propUpdateFunction)
+  alterSelectedMessages = (propToUpdate, propUpdateFn) => {
+    this.alterMessages('selected', true, propToUpdate, propUpdateFn)
   }
 
   toggleMessageProperty = (messageId, propToUpdate) => {
